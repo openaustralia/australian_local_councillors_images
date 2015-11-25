@@ -13,4 +13,4 @@ There is a script that fetches the latest copy of the EveryPolician Popolo data 
 
 It puts these images into `images/#{official_id_of_deputy}.jpg` so you can reliably fetch them from:
 
-    https://raw.githubusercontent.com/OPORA/ukraine_verkhovna_rada_deputy_images/master/#{official_id_of_deputy}.jpg
+    https://raw.githubusercontent.com/OPORA/ukraine_verkhovna_rada_deputy_images/master/images/#{official_id_of_deputy}.jpg
