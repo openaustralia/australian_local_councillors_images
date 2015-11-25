@@ -6,11 +6,8 @@ This repository is a copy of the official portraits of deputies in the Ukraine p
 
 There is a script that fetches the latest copy of the EveryPolician Popolo data and then fetches images for every deputy:
 
-    # Install the bundle
-    bundle install
-
     # Download the images
-    bundle exec ruby fetch_images.rb
+    ./fetch_images.rb
 
     # Now commit any changes and push to the repo
 
