@@ -18,13 +18,18 @@ people = JSON.parse(open(EVERYPOLITICIAN_URL).read)["persons"]
 people.each do |person|
   rada_id = person["identifiers"].find { |i| i["scheme"] == "rada" }["identifier"]
   file_name = "#{rada_id}.jpg"
+  s3_url = "https://s3.amazonaws.com/ukraine-verkhovna-rada-deputy-images/#{file_name}"
 
-  puts "Saving https://s3.amazonaws.com/ukraine-verkhovna-rada-deputy-images/#{file_name}"
-  directory.files.create(
-    key: file_name,
-    body: open(person["image"]).read,
-    public: true
-  )
+  if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
+    puts "Saving #{s3_url}"
+    directory.files.create(
+      key: file_name,
+      body: open(person["image"]).read,
+      public: true
+    )
+  else
+    puts "Skipping already saved #{s3_url}"
+  end
 end
 
 puts "All done."
