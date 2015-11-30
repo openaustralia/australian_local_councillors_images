@@ -115,6 +115,7 @@ GEM
     formatador (0.2.5)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    mime-types (2.6.2)
     mini_portile2 (2.0.0.rc2)
     multi_json (1.11.2)
     nokogiri (1.6.7)
@@ -126,6 +127,7 @@ PLATFORMS
 
 DEPENDENCIES
   fog
+  mime-types
 
 BUNDLED WITH
    1.10.6
