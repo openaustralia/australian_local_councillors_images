@@ -1,16 +1,9 @@
 # Ukraine Verkhovna Rada Deputy Images
 
-This repository is a copy of the official portraits of deputies in the Ukraine parliament. It's here so that there's a copy available that's no dependent on the parliament site and also so the images can be reliably served over HTTPS to sites like the Ukraine version of They Vote For You.
+This downloads a copy of the official portraits of deputies in the Ukraine parliament and saves them to S3. This is so the images are available over HTTPS and reliably available.
 
-## Usage
+This runs on morph.io to ensure the images are always up to date.
 
-There is a script that fetches the latest copy of the EveryPolician Popolo data and then fetches images for every deputy:
+The images are publicy available at:
 
-    # Download the images
-    ./fetch_images.rb
-
-    # Now commit any changes and push to the repo
-
-It puts these images into `images/#{official_id_of_deputy}.jpg` so you can reliably fetch them from:
-
-    https://raw.githubusercontent.com/OPORA/ukraine_verkhovna_rada_deputy_images/master/images/#{official_id_of_deputy}.jpg
+    https://s3.amazonaws.com/ukraine-verkhovna-rada-deputy-images/#{Rada ID for deputy}.jpg
