@@ -4,4 +4,7 @@ gem "fog"
 gem "mime-types"
 gem "everypolitician-popolo", git: "https://github.com/everypolitician/everypolitician-popolo.git"
 
-gem "dotenv", groups: :development
+group :development do
+  gem "dotenv"
+  gem "pry"
+end

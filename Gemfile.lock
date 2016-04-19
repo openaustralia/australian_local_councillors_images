@@ -9,6 +9,7 @@ GEM
   specs:
     CFPropertyList (2.3.2)
     builder (3.2.2)
+    coderay (1.1.1)
     dotenv (2.0.1)
     excon (0.45.4)
     fission (0.5.0)
@@ -122,11 +123,17 @@ GEM
     formatador (0.2.5)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    method_source (0.8.2)
     mime-types (2.6.2)
     mini_portile2 (2.0.0.rc2)
     multi_json (1.11.2)
     nokogiri (1.6.7)
       mini_portile2 (~> 2.0.0.rc2)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    slop (3.6.0)
     xml-simple (1.1.5)
 
 PLATFORMS
@@ -137,6 +144,7 @@ DEPENDENCIES
   everypolitician-popolo!
   fog
   mime-types
+  pry
 
 BUNDLED WITH
    1.11.2
