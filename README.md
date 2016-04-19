@@ -1,9 +1,21 @@
-# Ukraine Verkhovna Rada Deputy Images
+# Australia Local Councillors Images
 
-This downloads a copy of the official portraits of deputies in the Ukraine parliament and saves them to S3. This is so the images are available over HTTPS and reliably available.
+This downloads a copy of images from Popolo data and saves them to S3. This is so the images are available over HTTPS and reliably available.
 
 This runs on morph.io to ensure the images are always up to date.
 
 The images are publicy available at:
 
-    https://s3.amazonaws.com/ukraine-verkhovna-rada-deputy-images/#{Rada ID for deputy}.jpg
+    https://s3.amazonaws.com/australian-local-councillors-images/#{Popolo ID}.jpg
+
+## Usage
+
+The code is fairly generic and all the configuration is stored in environment variable so you should be able to repurpose this quite easily.
+
+All the expected environment variables are documented in `.env.example`. To test locally, copy this to `.env` and replace values with real ones. To run the script first install gems:
+
+    bundle
+
+Then run:
+
+    bundle exec dotenv ruby scraper.rb
