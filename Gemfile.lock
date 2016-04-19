@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/everypolitician/everypolitician-popolo.git
+  revision: 5aeb13b330983b4ad7882a3130d26acafe859945
+  specs:
+    everypolitician-popolo (0.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -128,8 +134,9 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv
+  everypolitician-popolo!
   fog
   mime-types
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
