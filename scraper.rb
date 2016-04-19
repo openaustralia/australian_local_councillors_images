@@ -8,7 +8,7 @@ s3_connection = Fog::Storage.new(
   aws_access_key_id: ENV["MORPH_AWS_ACCESS_KEY_ID"],
   aws_secret_access_key: ENV["MORPH_AWS_SECRET_ACCESS_KEY"]
 )
-directory = s3_connection.directories.get(MORPH_S3_BUCKET)
+directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 ENV["MORPH_POPOLO_URLS"].split.each do |url|
   people = JSON.parse(open(url).read)["persons"]
