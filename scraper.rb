@@ -15,7 +15,7 @@ ENV["MORPH_POPOLO_URLS"].split.each do |url|
 
   people.each do |person|
     file_name = "#{person.id}.jpg"
-    s3_url = "https://s3.amazonaws.com/#{ENV['MORPH_S3_BUCKET']}/#{file_name}"
+    s3_url = "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{file_name}"
 
     if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
       puts "Saving #{s3_url}"
