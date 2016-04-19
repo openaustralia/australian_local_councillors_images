@@ -11,6 +11,7 @@ s3_connection = Fog::Storage.new(
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 ENV["MORPH_POPOLO_URLS"].split.each do |url|
+  puts "Fetching Popolo data from: #{url}"
   people = EveryPolitician::Popolo.read(open(url)).persons
 
   people.each do |person|
