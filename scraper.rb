@@ -6,7 +6,8 @@ require "everypolitician/popolo"
 s3_connection = Fog::Storage.new(
   provider: "AWS",
   aws_access_key_id: ENV["MORPH_AWS_ACCESS_KEY_ID"],
-  aws_secret_access_key: ENV["MORPH_AWS_SECRET_ACCESS_KEY"]
+  aws_secret_access_key: ENV["MORPH_AWS_SECRET_ACCESS_KEY"],
+  region: ENV["MORPH_AWS_REGION"]
 )
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
