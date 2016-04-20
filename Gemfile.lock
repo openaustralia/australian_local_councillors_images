@@ -1,6 +1,7 @@
 GIT
-  remote: https://github.com/everypolitician/everypolitician-popolo.git
-  revision: 5aeb13b330983b4ad7882a3130d26acafe859945
+  remote: https://github.com/openaustralia/everypolitician-popolo.git
+  revision: 15d4c291b75b8f89ef695ce21fa10910655e2c6d
+  ref: 15d4c29
   specs:
     everypolitician-popolo (0.2.0)
 
