@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/everypolitician/everypolitician-popolo.git
-  revision: 5aeb13b330983b4ad7882a3130d26acafe859945
+  revision: b4ebf9711ef718d758e34c9e2b92738cbeae3c1f
   specs:
     everypolitician-popolo (0.2.0)
 
