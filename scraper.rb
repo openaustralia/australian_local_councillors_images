@@ -16,6 +16,11 @@ ENV["MORPH_POPOLO_URLS"].split.each do |url|
   people = EveryPolitician::Popolo.read(open(url)).persons
 
   people.each do |person|
+    if person.image.nil?
+      puts "WARN: No image found for #{person.id}"
+      next
+    end
+
     file_name = "#{person.id}.jpg"
     s3_url = "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{file_name}"
 
