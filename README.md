@@ -6,7 +6,7 @@ This runs on morph.io to ensure the images are always up to date.
 
 The images are publicy available at:
 
-    https://s3.amazonaws.com/australian-local-councillors-images/#{Popolo ID}.jpg
+    https://australian-local-councillors-images.s3.amazonaws.com/#{Popolo ID}.jpg
 
 ## Usage
 
