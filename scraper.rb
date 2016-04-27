@@ -1,8 +1,12 @@
 #!/usr/bin/env ruby
-require "open-uri"
+# Mechanize is totally overkill for what we need but it supports malformed
+# URLs that some councils have for their images and I'm too lazy to work out
+# how Mechanize is getting around that
+require "mechanize"
 require "fog"
 require "everypolitician/popolo"
 
+agent = Mechanize.new
 s3_connection = Fog::Storage.new(
   provider: "AWS",
   aws_access_key_id: ENV["MORPH_AWS_ACCESS_KEY_ID"],
@@ -13,7 +17,7 @@ directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 ENV["MORPH_POPOLO_URLS"].split.each do |url|
   puts "Fetching Popolo data from: #{url}"
-  people = EveryPolitician::Popolo.read(open(url)).persons
+  people = EveryPolitician::Popolo.parse(agent.get(url).body).persons
 
   people.each do |person|
     if person.image.nil?
@@ -28,7 +32,7 @@ ENV["MORPH_POPOLO_URLS"].split.each do |url|
       puts "Saving #{s3_url}"
       directory.files.create(
         key: file_name,
-        body: open(person.image).read,
+        body: agent.get(person.image).body,
         public: true
       )
     else
