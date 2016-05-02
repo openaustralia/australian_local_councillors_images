@@ -17,6 +17,8 @@ directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 target_urls = ENV["MORPH_POPOLO_URLS"].split
 
+target_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
+
 target_urls.each do |url|
   puts "Fetching Popolo data from: #{url}"
   people = EveryPolitician::Popolo.parse(agent.get(url).body).persons
