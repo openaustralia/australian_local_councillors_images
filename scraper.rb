@@ -15,11 +15,20 @@ s3_connection = Fog::Storage.new(
 )
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
-target_urls = ENV["MORPH_POPOLO_URLS"].split
+popolo_urls = [
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/nsw_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/vic_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/qld_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/wa_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/tas_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/act_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/nt_local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/sa_local_councillor_popolo.json"
+]
 
-target_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
+popolo_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
 
-target_urls.each do |url|
+popolo_urls.each do |url|
   puts "Fetching Popolo data from: #{url}"
   people = EveryPolitician::Popolo.parse(agent.get(url).body).persons
 
