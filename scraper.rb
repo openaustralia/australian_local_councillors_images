@@ -31,7 +31,15 @@ popolo_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORP
 popolo_urls.each do |url|
   puts "Fetching Popolo data from: #{url}"
   popolo = EveryPolitician::Popolo.parse(agent.get(url).body)
-  people = popolo.persons
+  organization_id = ENV["MORPH_TARGET_ORGANIZATION"]
+
+  people = if organization_id
+    puts "Searching for organization #{organization_id}"
+    memberships = popolo.memberships.where(organization_id: organization_id)
+    memberships.map { |m| popolo.persons.find_by(id: m.person_id) }
+  else
+    popolo.persons
+  end
 
   people.each do |person|
     if person.image.nil?
