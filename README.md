@@ -19,3 +19,12 @@ All the expected environment variables are documented in `.env.example`. To test
 Then run:
 
     bundle exec dotenv ruby scraper.rb
+
+To speed things up, you can specify an Australian state or territory to target
+using the environment variable `ENV["MORPH_TARGET_STATE"]`, e.g.:
+
+    MORPH_TARGET_STATE=sa
+
+You can also target a specific organization by id using `ENV["MORPH_TARGET_ORGANIZATION"]`, e.g.:
+
+    MORPH_TARGET_ORGANIZATION=legislature/city_of_unley
