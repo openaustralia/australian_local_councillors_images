@@ -28,3 +28,15 @@ using the environment variable `ENV["MORPH_TARGET_STATE"]`, e.g.:
 You can also target a specific organization by id using `ENV["MORPH_TARGET_ORGANIZATION"]`, e.g.:
 
     MORPH_TARGET_ORGANIZATION=legislature/city_of_unley
+
+## Resizing the images
+
+This scraper can also save a resized version of the images as a JPEG.
+You can configure the width, and the height of the image you’d like to save using environment variables:
+
+```
+MORPH_RESIZE_IMAGES=true
+MORPH_RESIZE_WIDTH=80
+MORPH_RESIZE_HEIGHT=88
+MORPH_CLOBBER_PROCESSED_IMAGES=false
+```

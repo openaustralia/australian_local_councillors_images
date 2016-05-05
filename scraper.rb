@@ -26,7 +26,10 @@ end
 
 # TODO: Make the url, width and height configurable with ENV variables
 def image_proccessing_proxy_url(image_source_url)
-  "http://floating-refuge-38180.herokuapp.com/" + url_encode(image_source_url) + "/80/88.jpg"
+  "http://floating-refuge-38180.herokuapp.com/" +
+   url_encode(image_source_url) +
+   "/#{ENV["MORPH_RESIZE_WIDTH"]}/" +
+   "#{ENV["MORPH_RESIZE_HEIGHT"]}.jpg"
 end
 
 agent = Mechanize.new
@@ -71,7 +74,7 @@ popolo_urls.each do |url|
     end
 
     file_name = "#{person.id}.jpg"
-    resized_file_name = "#{person.id}-80x88.jpg"
+    resized_file_name = "#{person.id}-#{ENV["MORPH_RESIZE_WIDTH"]}x#{ENV["MORPH_RESIZE_HEIGHT"]}.jpg"
 
     if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
       fetch_and_save_image(agent, directory, person.image, file_name)
@@ -79,15 +82,17 @@ popolo_urls.each do |url|
       puts "Skipping already saved #{s3_url(file_name)}"
     end
 
-    if ENV["MORPH_CLOBBER_PROCESSED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
-      fetch_and_save_image(
-        agent,
-        directory,
-        image_proccessing_proxy_url(s3_url(file_name)),
-        resized_file_name
-      )
-    else
-      puts "Skipping already saved resized image #{s3_url(resized_file_name)}"
+    if ENV["MORPH_RESIZE_IMAGES"] == "true"
+      if ENV["MORPH_CLOBBER_PROCESSED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
+        fetch_and_save_image(
+          agent,
+          directory,
+          image_proccessing_proxy_url(s3_url(file_name)),
+          resized_file_name
+        )
+      else
+        puts "Skipping already saved resized image #{s3_url(resized_file_name)}"
+      end
     end
   end
 end
