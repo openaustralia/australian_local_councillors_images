@@ -8,6 +8,7 @@ require "everypolitician/popolo"
 require "erb"
 include ERB::Util
 
+# TODO: Make the url, width and height configurable with ENV variables
 def image_proccessing_proxy_url(image_source_url)
   "http://floating-refuge-38180.herokuapp.com/" + url_encode(image_source_url) + "/80/88.jpg"
 end
