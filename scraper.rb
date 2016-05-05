@@ -15,6 +15,7 @@ end
 def fetch_and_save_image(agent, directory, source_url, file_name)
   puts "Fetching #{source_url}"
   file_body = agent.get(source_url).body
+
   puts "Saving image to #{s3_url(file_name)}"
   directory.files.create(
     key: file_name,
