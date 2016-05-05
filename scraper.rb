@@ -83,7 +83,7 @@ popolo_urls.each do |url|
     end
 
     if ENV["MORPH_RESIZE_IMAGES"] == "true"
-      if ENV["MORPH_CLOBBER_PROCESSED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
+      if ENV["MORPH_CLOBBER_RESIZED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
         fetch_and_save_image(
           agent,
           directory,

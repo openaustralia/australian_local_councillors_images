@@ -38,5 +38,6 @@ You can configure the width, and the height of the image you’d like to save us
 MORPH_RESIZE_IMAGES=true
 MORPH_RESIZE_WIDTH=80
 MORPH_RESIZE_HEIGHT=88
-MORPH_CLOBBER_PROCESSED_IMAGES=false
+# Reprocess and save the resized images
+MORPH_CLOBBER_RESIZED_IMAGES=false
 ```
