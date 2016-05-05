@@ -72,8 +72,7 @@ popolo_urls.each do |url|
       puts "Skipping already saved #{s3_url}"
     end
 
-    # TODO: Add option to reprocess/clobber these files
-    if directory.files.head(resized_file_name).nil?
+    if ENV["MORPH_CLOBBER_PROCESSED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
       puts "Fetching #{image_proccessing_proxy_url(s3_url)}"
       resized_image = agent.get(image_proccessing_proxy_url(s3_url)).body
       puts "Saving resized image to #{s3_url}"
