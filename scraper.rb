@@ -51,10 +51,12 @@ popolo_urls.each do |url|
     s3_url = "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{file_name}"
 
     if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
+      puts "Fetching #{person.image}"
+      image = agent.get(person.image).body
       puts "Saving #{s3_url}"
       directory.files.create(
         key: file_name,
-        body: agent.get(person.image).body,
+        body: image,
         public: true
       )
     else
