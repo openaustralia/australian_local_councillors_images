@@ -24,6 +24,10 @@ def fetch_and_save_image(agent, directory, source_url, file_name)
   )
 end
 
+def clobber_resized_image?
+  ENV["MORPH_CLOBBER"] == "true" || ENV["MORPH_CLOBBER_RESIZED_IMAGES"] == "true"
+end
+
 # TODO: Make the url, width and height configurable with ENV variables
 def image_proccessing_proxy_url(image_source_url)
   "http://floating-refuge-38180.herokuapp.com/" +
@@ -83,7 +87,7 @@ popolo_urls.each do |url|
     end
 
     if ENV["MORPH_RESIZE_IMAGES"] == "true"
-      if ENV["MORPH_CLOBBER"] == "true" || ENV["MORPH_CLOBBER_RESIZED_IMAGES"] == "true" || directory.files.head(resized_file_name).nil?
+      if clobber_resized_image? || directory.files.head(resized_file_name).nil?
         fetch_and_save_image(
           agent,
           directory,
