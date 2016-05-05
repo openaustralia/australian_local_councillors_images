@@ -34,10 +34,8 @@ You can also target a specific organization by id using `ENV["MORPH_TARGET_ORGAN
 This scraper can also save a resized version of the images as a JPEG.
 You can configure the width, and the height of the image you’d like to save using environment variables:
 
-```
-MORPH_RESIZE_IMAGES=true
-MORPH_RESIZE_WIDTH=80
-MORPH_RESIZE_HEIGHT=88
-# Reprocess and save the resized images
-MORPH_CLOBBER_RESIZED_IMAGES=false
-```
+    MORPH_RESIZE_IMAGES=true
+    MORPH_RESIZE_WIDTH=80
+    MORPH_RESIZE_HEIGHT=88
+    # Reprocess and save the resized images
+    MORPH_CLOBBER_RESIZED_IMAGES=false
