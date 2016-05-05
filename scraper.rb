@@ -5,6 +5,12 @@
 require "mechanize"
 require "fog"
 require "everypolitician/popolo"
+require "erb"
+include ERB::Util
+
+def image_proccessing_proxy_url(image_source_url)
+  "http://floating-refuge-38180.herokuapp.com/" + url_encode(image_source_url) + "/80/88.jpg"
+end
 
 agent = Mechanize.new
 s3_connection = Fog::Storage.new(
@@ -48,7 +54,9 @@ popolo_urls.each do |url|
     end
 
     file_name = "#{person.id}.jpg"
+    resized_file_name = "#{person.id}-80x88.jpg"
     s3_url = "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{file_name}"
+    s3_resized_url = "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{resized_file_name}"
 
     if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
       puts "Fetching #{person.image}"
@@ -61,6 +69,20 @@ popolo_urls.each do |url|
       )
     else
       puts "Skipping already saved #{s3_url}"
+    end
+
+    # TODO: Add option to reprocess/clobber these files
+    if directory.files.head(resized_file_name).nil?
+      puts "Fetching #{image_proccessing_proxy_url(s3_url)}"
+      resized_image = agent.get(image_proccessing_proxy_url(s3_url)).body
+      puts "Saving resized image to #{s3_url}"
+      directory.files.create(
+        key: resized_file_name,
+        body: resized_image,
+        public: true
+      )
+    else
+      puts "Skipping already saved resized image #{s3_resized_url}"
     end
   end
 end
