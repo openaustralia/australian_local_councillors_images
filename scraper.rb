@@ -46,14 +46,14 @@ s3_connection = Fog::Storage.new(
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 popolo_urls = [
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/nsw_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/vic_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/qld_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/wa_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/tas_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/act_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/nt_local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/sa_local_councillor_popolo.json"
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NSW/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/VIC/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/QLD/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/WA/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/TAS/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/ACT/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NT/local_councillor_popolo.json",
+  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/SA/local_councillor_popolo.json"
 ]
 
 popolo_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
