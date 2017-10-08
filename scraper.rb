@@ -13,7 +13,7 @@ def s3_url(path)
   "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{path}"
 end
 
-def fetch_and_save_image(agent, directory, source_url, file_name)
+def fetch_and_save_image(agent:, directory:, source_url:, file_name:)
   puts "Fetching #{source_url}"
   file_body = agent.get(source_url).body
 
@@ -26,8 +26,15 @@ def fetch_and_save_image(agent, directory, source_url, file_name)
 end
 
 def clobber_resized_image?
-  ENV['MORPH_CLOBBER'] == 'true' ||
-    ENV['MORPH_CLOBBER_RESIZED_IMAGES'] == 'true'
+  %w[MORPH_CLOBBER MORPH_CLOBBER_RESIZED_IMAGES].any? { |e| ENV[e] == 'true' }
+end
+
+def morph_clobber?
+  ENV['MORPH_CLOBBER'] == 'true'
+end
+
+def morph_resize_images?
+  ENV['MORPH_RESIZE_IMAGES'] == 'true'
 end
 
 # TODO: Make the url, width and height configurable with ENV variables
@@ -40,14 +47,22 @@ def image_proccessing_proxy_url(image_source_url)
   ].join
 end
 
-agent = Mechanize.new
-s3_connection = Fog::Storage.new(
-  provider: 'AWS',
-  aws_access_key_id: ENV['MORPH_AWS_ACCESS_KEY_ID'],
-  aws_secret_access_key: ENV['MORPH_AWS_SECRET_ACCESS_KEY'],
-  region: ENV['MORPH_AWS_REGION']
-)
-directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
+def agent
+  @agent ||= Mechanize.new
+end
+
+def s3_connection
+  @s3_connection ||= Fog::Storage.new(
+    provider: 'AWS',
+    aws_access_key_id: ENV['MORPH_AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key: ENV['MORPH_AWS_SECRET_ACCESS_KEY'],
+    region: ENV['MORPH_AWS_REGION']
+  )
+end
+
+def directory
+  @directory ||= s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
+end
 
 # rubocop:disable Metrics/LineLength
 def popolo_urls
@@ -63,18 +78,26 @@ def popolo_urls
 end
 # rubocop:enable Metrics/LineLength
 
-popolo_urls.each do |url|
-  puts "Fetching Popolo data from: #{url}"
-  popolo = EveryPolitician::Popolo.parse(agent.get(url).body)
-  organization_id = ENV['MORPH_TARGET_ORGANIZATION']
+def organization_id
+  ENV['MORPH_TARGET_ORGANIZATION']
+end
 
-  people = if organization_id
+def popolo
+  @popolo ||= EveryPolitician::Popolo.parse(agent.get(url).body)
+end
+
+def people
+  if organization_id
     puts "Searching for organization #{organization_id}"
     memberships = popolo.memberships.where(organization_id: organization_id)
     memberships.map { |m| popolo.persons.find_by(id: m.person_id) }
   else
     popolo.persons
   end
+end
+
+popolo_urls.each do |url|
+  puts "Fetching Popolo data from: #{url}"
 
   people.each do |person|
     if person.image.nil?
@@ -85,20 +108,16 @@ popolo_urls.each do |url|
     file_name = "#{person.id}.jpg"
     resized_file_name = "#{person.id}-#{ENV['MORPH_RESIZE_WIDTH']}x#{ENV['MORPH_RESIZE_HEIGHT']}.jpg"
 
-    if ENV['MORPH_CLOBBER'] == 'true' || directory.files.head(file_name).nil?
-      fetch_and_save_image(agent, directory, person.image, file_name)
+    if morph_clobber? || directory.files.head(file_name).nil?
+      fetch_and_save_image(agent: agent, directory: directory, source_url: person.image, file_name: file_name)
     else
       puts "Skipping already saved #{s3_url(file_name)}"
     end
 
-    if ENV['MORPH_RESIZE_IMAGES'] == 'true'
+    if morph_resize_images?
       if clobber_resized_image? || directory.files.head(resized_file_name).nil?
-        fetch_and_save_image(
-          agent,
-          directory,
-          image_proccessing_proxy_url(s3_url(file_name)),
-          resized_file_name
-        )
+        source_url = image_proccessing_proxy_url(s3_url(file_name))
+        fetch_and_save_image(agent: agent, directory: directory, source_url: source_url, file_name: resized_file_name)
       else
         puts "Skipping already saved resized image #{s3_url(resized_file_name)}"
       end
