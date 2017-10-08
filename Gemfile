@@ -10,6 +10,8 @@ gem 'mime-types'
 group :development do
   gem 'dotenv'
   gem 'pry'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
   gem 'rspec'
   gem 'rubocop'
 end
