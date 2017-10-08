@@ -49,18 +49,19 @@ s3_connection = Fog::Storage.new(
 )
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
-popolo_urls = [
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/ACT/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/QLD/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/SA/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/TAS/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NSW/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NT/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/VIC/local_councillor_popolo.json',
-  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/WA/local_councillor_popolo.json'
-]
-
-popolo_urls.select! { |url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
+# rubocop:disable Metrics/LineLength
+def popolo_urls
+  return @urls if @urls
+  @urls = %w[ACT QLD NSW NT SA TAS VIC WA].map do |state|
+    "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/#{state}/local_councillor_popolo.json"
+  end
+  if ENV['MORPH_TARGET_STATE']
+    @urls.select! { |url| url.include? ENV['MORPH_TARGET_STATE'] }
+  else
+    @urls
+  end
+end
+# rubocop:enable Metrics/LineLength
 
 popolo_urls.each do |url|
   puts "Fetching Popolo data from: #{url}"
