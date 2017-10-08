@@ -13,7 +13,7 @@ def s3_url(path)
   "https://#{ENV['MORPH_S3_BUCKET']}.s3.amazonaws.com/#{path}"
 end
 
-def fetch_and_save_image(agent:, directory:, source_url:, file_name:)
+def fetch_and_save_image(source_url:, file_name:)
   puts "Fetching #{source_url}"
   file_body = agent.get(source_url).body
 
@@ -96,6 +96,25 @@ rescue Mechanize::ResponseCodeError => e
   []
 end
 
+def file_names_for(person:)
+  file_name = "#{person.id}.jpg"
+  resized_file_name = "#{person.id}-#{ENV['MORPH_RESIZE_WIDTH']}x#{ENV['MORPH_RESIZE_HEIGHT']}.jpg"
+  [file_name, resized_file_name]
+end
+
+def fetch_and_save_resized_image(person:)
+  return unless morph_resize_images?
+
+  file_name, resized_file_name = file_names_for(person: person)
+
+  if clobber_resized_image? || directory.files.head(resized_file_name).nil?
+    source_url = image_proccessing_proxy_url(s3_url(file_name))
+    fetch_and_save_image(source_url: source_url, file_name: resized_file_name)
+  else
+    puts "Skipping already saved resized image #{s3_url(resized_file_name)}"
+  end
+end
+
 def main
   popolo_urls.each do |url|
     puts "Fetching Popolo data from: #{url}"
@@ -105,23 +124,15 @@ def main
         next
       end
 
-      file_name = "#{person.id}.jpg"
-      resized_file_name = "#{person.id}-#{ENV['MORPH_RESIZE_WIDTH']}x#{ENV['MORPH_RESIZE_HEIGHT']}.jpg"
+      file_name, = file_names_for(person: person)
 
       if morph_clobber? || directory.files.head(file_name).nil?
-        fetch_and_save_image(agent: agent, directory: directory, source_url: person.image, file_name: file_name)
+        fetch_and_save_image(source_url: person.image, file_name: file_name)
       else
         puts "Skipping already saved #{s3_url(file_name)}"
       end
 
-      if morph_resize_images?
-        if clobber_resized_image? || directory.files.head(resized_file_name).nil?
-          source_url = image_proccessing_proxy_url(s3_url(file_name))
-          fetch_and_save_image(agent: agent, directory: directory, source_url: source_url, file_name: resized_file_name)
-        else
-          puts "Skipping already saved resized image #{s3_url(resized_file_name)}"
-        end
-      end
+      fetch_and_save_resized_image(person: person)
     end
   end
 
