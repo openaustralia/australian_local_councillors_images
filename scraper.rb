@@ -82,11 +82,8 @@ def organization_id
   ENV['MORPH_TARGET_ORGANIZATION']
 end
 
-def popolo
-  @popolo ||= EveryPolitician::Popolo.parse(agent.get(url).body)
-end
-
-def people
+def people(at:)
+  popolo = EveryPolitician::Popolo.parse(agent.get(at).body)
   if organization_id
     puts "Searching for organization #{organization_id}"
     memberships = popolo.memberships.where(organization_id: organization_id)
