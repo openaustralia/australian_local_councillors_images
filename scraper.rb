@@ -78,7 +78,7 @@ def popolo_urls
 end
 # rubocop:enable Metrics/LineLength
 
-def organization_id
+def org_id
   ENV['MORPH_TARGET_ORGANIZATION']
 end
 
@@ -87,8 +87,8 @@ def popolo(url:)
 end
 
 def people(at:)
-  return popolo(url: at).persons unless organization_id
-  popolo(url: at).memberships.where(organization_id: organization_id).map do |m|
+  return popolo(url: at).persons unless org_id
+  popolo(url: at).memberships.where(org_id: org_id).map do |m|
     popolo(url: at).persons.find_by(id: m.person_id)
   end
 rescue Mechanize::ResponseCodeError => e
