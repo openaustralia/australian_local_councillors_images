@@ -1,11 +1,12 @@
-#!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # Mechanize is totally overkill for what we need but it supports malformed
 # URLs that some councils have for their images and I'm too lazy to work out
 # how Mechanize is getting around that
-require "mechanize"
-require "fog"
-require "everypolitician/popolo"
-require "erb"
+require 'mechanize'
+require 'fog'
+require 'everypolitician/popolo'
+require 'erb'
 include ERB::Util
 
 def s3_url(path)
@@ -25,43 +26,46 @@ def fetch_and_save_image(agent, directory, source_url, file_name)
 end
 
 def clobber_resized_image?
-  ENV["MORPH_CLOBBER"] == "true" || ENV["MORPH_CLOBBER_RESIZED_IMAGES"] == "true"
+  ENV['MORPH_CLOBBER'] == 'true' ||
+    ENV['MORPH_CLOBBER_RESIZED_IMAGES'] == 'true'
 end
 
 # TODO: Make the url, width and height configurable with ENV variables
 def image_proccessing_proxy_url(image_source_url)
-  "http://floating-refuge-38180.herokuapp.com/" +
-   url_encode(image_source_url) +
-   "/#{ENV["MORPH_RESIZE_WIDTH"]}/" +
-   "#{ENV["MORPH_RESIZE_HEIGHT"]}.jpg"
+  [
+    'http://floating-refuge-38180.herokuapp.com/',
+    url_encode(image_source_url),
+    "/#{ENV['MORPH_RESIZE_WIDTH']}/",
+    "#{ENV['MORPH_RESIZE_HEIGHT']}.jpg"
+  ].join
 end
 
 agent = Mechanize.new
 s3_connection = Fog::Storage.new(
-  provider: "AWS",
-  aws_access_key_id: ENV["MORPH_AWS_ACCESS_KEY_ID"],
-  aws_secret_access_key: ENV["MORPH_AWS_SECRET_ACCESS_KEY"],
-  region: ENV["MORPH_AWS_REGION"]
+  provider: 'AWS',
+  aws_access_key_id: ENV['MORPH_AWS_ACCESS_KEY_ID'],
+  aws_secret_access_key: ENV['MORPH_AWS_SECRET_ACCESS_KEY'],
+  region: ENV['MORPH_AWS_REGION']
 )
 directory = s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
 
 popolo_urls = [
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NSW/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/VIC/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/QLD/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/WA/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/TAS/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/ACT/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NT/local_councillor_popolo.json",
-  "https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/SA/local_councillor_popolo.json"
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/ACT/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/QLD/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/SA/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/TAS/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NSW/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/NT/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/VIC/local_councillor_popolo.json',
+  'https://github.com/openaustralia/australian_local_councillors_popolo/raw/master/data/WA/local_councillor_popolo.json'
 ]
 
-popolo_urls.select! {|url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
+popolo_urls.select! { |url| url.include? ENV['MORPH_TARGET_STATE'] } if ENV['MORPH_TARGET_STATE']
 
 popolo_urls.each do |url|
   puts "Fetching Popolo data from: #{url}"
   popolo = EveryPolitician::Popolo.parse(agent.get(url).body)
-  organization_id = ENV["MORPH_TARGET_ORGANIZATION"]
+  organization_id = ENV['MORPH_TARGET_ORGANIZATION']
 
   people = if organization_id
     puts "Searching for organization #{organization_id}"
@@ -78,15 +82,15 @@ popolo_urls.each do |url|
     end
 
     file_name = "#{person.id}.jpg"
-    resized_file_name = "#{person.id}-#{ENV["MORPH_RESIZE_WIDTH"]}x#{ENV["MORPH_RESIZE_HEIGHT"]}.jpg"
+    resized_file_name = "#{person.id}-#{ENV['MORPH_RESIZE_WIDTH']}x#{ENV['MORPH_RESIZE_HEIGHT']}.jpg"
 
-    if ENV["MORPH_CLOBBER"] == "true" || directory.files.head(file_name).nil?
+    if ENV['MORPH_CLOBBER'] == 'true' || directory.files.head(file_name).nil?
       fetch_and_save_image(agent, directory, person.image, file_name)
     else
       puts "Skipping already saved #{s3_url(file_name)}"
     end
 
-    if ENV["MORPH_RESIZE_IMAGES"] == "true"
+    if ENV['MORPH_RESIZE_IMAGES'] == 'true'
       if clobber_resized_image? || directory.files.head(resized_file_name).nil?
         fetch_and_save_image(
           agent,
@@ -101,4 +105,4 @@ popolo_urls.each do |url|
   end
 end
 
-puts "All done."
+puts 'All done.'
