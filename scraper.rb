@@ -102,6 +102,16 @@ def file_names_for(person:)
   [file_name, resized_file_name]
 end
 
+def fetch_and_save_original_image(person:)
+  file_name, = file_names_for(person: person)
+
+  if morph_clobber? || directory.files.head(file_name).nil?
+    fetch_and_save_image(source_url: person.image, file_name: file_name)
+  else
+    puts "Skipping already saved #{s3_url(file_name)}"
+  end
+end
+
 def fetch_and_save_resized_image(person:)
   return unless morph_resize_images?
 
@@ -115,27 +125,24 @@ def fetch_and_save_resized_image(person:)
   end
 end
 
+def no_image?(person:)
+  if person.image.nil?
+    puts "WARN: No image found for #{person.id}"
+    true
+  else
+    false
+  end
+end
+
 def main
   popolo_urls.each do |url|
     puts "Fetching Popolo data from: #{url}"
     people(at: url).each do |person|
-      if person.image.nil?
-        puts "WARN: No image found for #{person.id}"
-        next
-      end
-
-      file_name, = file_names_for(person: person)
-
-      if morph_clobber? || directory.files.head(file_name).nil?
-        fetch_and_save_image(source_url: person.image, file_name: file_name)
-      else
-        puts "Skipping already saved #{s3_url(file_name)}"
-      end
-
+      next if no_image?(person: person)
+      fetch_and_save_original_image(person: person)
       fetch_and_save_resized_image(person: person)
     end
   end
-
   puts 'All done.'
 end
 
