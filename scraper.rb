@@ -82,15 +82,18 @@ def organization_id
   ENV['MORPH_TARGET_ORGANIZATION']
 end
 
+def popolo(url:)
+  EveryPolitician::Popolo.parse(agent.get(url).body)
+end
+
 def people(at:)
-  popolo = EveryPolitician::Popolo.parse(agent.get(at).body)
-  if organization_id
-    puts "Searching for organization #{organization_id}"
-    memberships = popolo.memberships.where(organization_id: organization_id)
-    memberships.map { |m| popolo.persons.find_by(id: m.person_id) }
-  else
-    popolo.persons
+  return popolo(url: at).persons unless organization_id
+  popolo(url: at).memberships.where(organization_id: organization_id).map do |m|
+    popolo(url: at).persons.find_by(id: m.person_id)
   end
+rescue Mechanize::ResponseCodeError => e
+  puts "WARNING: #{e.message}"
+  []
 end
 
 def main
