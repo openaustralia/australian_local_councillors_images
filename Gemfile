@@ -12,6 +12,11 @@ group :development do
   gem 'pry'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
-  gem 'rspec'
   gem 'rubocop'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'vcr'
+  gem 'webmock'
 end

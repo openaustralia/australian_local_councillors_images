@@ -91,6 +91,9 @@ def people(at:)
   popolo(url: at).memberships.where(org_id: org_id).map do |m|
     popolo(url: at).persons.find_by(id: m.person_id)
   end
+rescue Mechanize::ResponseCodeError => e
+  puts "WARNING: #{e.message}"
+  []
 end
 
 def file_names_for(person:)
