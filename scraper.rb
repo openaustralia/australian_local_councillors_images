@@ -134,7 +134,13 @@ def no_image?(person:)
   end
 end
 
+def required_environment_variables?
+  names = %w[MORPH_S3_BUCKET MORPH_AWS_ACCESS_KEY_ID MORPH_AWS_SECRET_ACCESS_KEY MORPH_AWS_REGION]
+  names.all? { |n| ENV[n] }
+end
+
 def main
+  exit(1) unless required_environment_variables?
   popolo_urls.each do |url|
     puts "Fetching Popolo data from: #{url}"
     people(at: url).each do |person|
