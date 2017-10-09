@@ -16,3 +16,18 @@ RSpec.configure do |config|
 end
 
 def puts(*args); end
+
+def restore_env
+  ENV.replace(@original) if @original
+  @original = nil
+end
+
+def unset_environment_variable(name)
+  @original ||= ENV.to_hash
+  ENV.delete(name)
+end
+
+def set_environment_variable(name, value)
+  @original ||= ENV.to_hash
+  ENV[name] = value
+end

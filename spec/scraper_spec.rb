@@ -21,4 +21,22 @@ describe 'australian_local_councillors_images' do
       end
     end
   end
+
+  describe '.directory' do
+    context 'invalid environment variables' do
+      before(:each) do
+        set_environment_variable('MORPH_AWS_ACCESS_KEY_ID', 'xxxxxx')
+        set_environment_variable('MORPH_AWS_SECRET_ACCESS_KEY', 'xxxxxx')
+        set_environment_variable('MORPH_S3_BUCKET', 'xxxxxx')
+      end
+
+      it 'raises a helpful message' do
+        VCR.use_cassette('s3_invalid_credentials') do
+          expect { directory }.to raise_error(SystemExit)
+        end
+      end
+
+      after(:each) { restore_env }
+    end
+  end
 end

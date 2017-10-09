@@ -62,6 +62,9 @@ end
 
 def directory
   @directory ||= s3_connection.directories.get(ENV['MORPH_S3_BUCKET'])
+rescue StandardError => e
+  puts "ERROR: #{e.message}"
+  exit(1)
 end
 
 # rubocop:disable Metrics/LineLength
